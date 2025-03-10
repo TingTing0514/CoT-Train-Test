@@ -5,18 +5,18 @@ from transformers import TrainingArguments
 from datasets import load_dataset
 
 
-model_name = "DeepSeek-R1-Distill-Qwen-1.5B"
+model_name = "DeepSeek-R1-Distill-Qwen-7B"
 max_seq_length = 2048
 dtype = None
 load_in_4bit = True
-output_dir = f"/root/data/outputData/{model_name}-v2/outputs"
+output_dir = f"/root/CoT-Train-Test/outputData/{model_name}-v1/outputs"
 run = wandb.init(
-    project='Fine-tune-DeepSeek-R1-Distill-Qwen-1.5B on medical_o1-reasoning-SFT',
+    project='Fine-tune-DeepSeek-R1-Distill-Qwen-7B on law-reasoning-SFT',
     job_type="training"
 )
 
 model, tokenizer = FastLanguageModel.from_pretrained(
-    model_name = "/root/data/DeepSeek-R1-Distill-Qwen-1.5B",
+    model_name = "/root/CoT-Train-Test/DeepSeek-R1-Distill-Qwen-7B",
     max_seq_length = max_seq_length,
     dtype = dtype,
     load_in_4bit = load_in_4bit
@@ -28,8 +28,8 @@ model, tokenizer = FastLanguageModel.from_pretrained(
 train_prompt_style = """以下是描述一项任务的说明，以及提供进一步背景信息的输入内容。
 请给出恰当的回答以完成请求。
 在回答之前，请仔细思考问题，并构建一个逐步的思维链条，以确保回答合乎逻辑且准确无误
-### 您是一位在临床推理、诊断和治疗计划方面拥有高级知识的医学专家。
-请回答以下医学问题。
+### 您是一位合同法专家。
+请回答以下法律问题。
 ### Question:
 {}
 
@@ -40,7 +40,7 @@ train_prompt_style = """以下是描述一项任务的说明，以及提供进�
 {}
 """
 
-question = "一位 61 岁女性，长期在咳嗽或打喷嚏等活动时出现尿失禁，但夜间无尿失禁现象。该患者接受了妇科检查和棉签试验。根据这些检查结果，膀胱测压最有可能显示其残余尿量和逼尿肌收缩情况如何？"
+question = "我和朋友合伙开了一家咖啡店，我们签了一份合作协议，但现在他突然说要退出，不想继续合作了。我该怎么办？"
 
 
 # FastLanguageModel.for_inference(model) 
@@ -58,9 +58,9 @@ question = "一位 61 岁女性，长期在咳嗽或打喷嚏等活动时出现�
 EOS_TOKEN = tokenizer.eos_token
 
 def format_prompts_func(examples):
-    inputs = examples["Question"]
-    cots = examples["Complex_CoT"]
-    outputs = examples["Response"]
+    inputs = examples["input"]
+    cots = examples["reasoning"]
+    outputs = examples["output"]
     texts = []
     for input_question,cot,output in zip(inputs,cots,outputs):
         text = train_prompt_style.format(input_question,cot,output) + EOS_TOKEN
@@ -71,9 +71,7 @@ def format_prompts_func(examples):
 
 train_dataset = load_dataset(
     path="json",
-    data_files="/root/data/dataset/medical-o1-reasoning-SFT/medical_o1_sft_Chinese.json",
-    split="train[0:20000]",  
-
+    data_files="/root/CoT-Train-Test/CoT-Train-Test/law_CoT.json",
     )
 train_dataset = train_dataset.map(format_prompts_func, batched = True)
 
@@ -130,7 +128,7 @@ trainer = SFTTrainer(
 )
 trainer.train()
 
-output_model_dir = "/root/data/DeepSeek-R1-1.5B-Medical-COT-v2"
+output_model_dir = "/root/CoT-Train-Test/DeepSeek-R1-Distill-Qwen-7B-law-CoT-v1"
 trainer.save_model(output_model_dir)
 # 也保存 tokenizer
 tokenizer.save_pretrained(output_model_dir)
