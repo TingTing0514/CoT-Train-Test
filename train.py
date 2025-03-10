@@ -4,6 +4,8 @@ from trl import SFTTrainer
 from transformers import TrainingArguments
 from datasets import load_dataset
 
+device = torch.device("npu")
+
 
 model_name = "DeepSeek-R1-Distill-Qwen-7B"
 max_seq_length = 2048
@@ -20,7 +22,7 @@ model, tokenizer = FastLanguageModel.from_pretrained(
     max_seq_length = max_seq_length,
     dtype = dtype,
     load_in_4bit = load_in_4bit
-)
+).to(device)
 
 
 
