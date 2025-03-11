@@ -18,7 +18,7 @@ run = wandb.init(
 )
 
 model, tokenizer = AutoModelForCausalLM.from_pretrained(
-    model_name = "/root/CoT-Train-Test/DeepSeek-R1-Distill-Qwen-7B",
+      pretrained_model_name_or_path = "/root/CoT-Train-Test/DeepSeek-R1-Distill-Qwen-7B",
     max_length=max_seq_length,
     load_in_4bit=load_in_4bit
 ).to(device), AutoTokenizer.from_pretrained(model_name)
