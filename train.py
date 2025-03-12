@@ -7,18 +7,18 @@ from datasets import load_dataset
 device = torch.device("npu")
 
 
-model_name = "DeepSeek-R1-Distill-Qwen-7B"
+model_name = "DeepSeek-R1-Distill-Qwen-1.5B"
 max_seq_length = 2048
 dtype = None
 # load_in_4bit = True
 output_dir = f"/root/CoT-Train-Test/outputData/{model_name}-v1/outputs"
 run = wandb.init(
-    project='Fine-tune-DeepSeek-R1-Distill-Qwen-7B on law-reasoning-SFT',
+    project='Fine-tune-DeepSeek-R1-Distill-Qwen-1.5B on law-reasoning-SFT',
     job_type="training"
 )
 
 model, tokenizer = AutoModelForCausalLM.from_pretrained(
-      pretrained_model_name_or_path = "/root/CoT-Train-Test/DeepSeek-R1-Distill-Qwen-7B",
+      pretrained_model_name_or_path = "/root/CoT-Train-Test/DeepSeek-R1-Distill-Qwen-1.5B",
     max_length=max_seq_length,
     # load_in_4bit=load_in_4bit
 ).to(device), AutoTokenizer.from_pretrained(model_name)
@@ -108,7 +108,7 @@ trainer = SFTTrainer(
 
 trainer.train()
 
-output_model_dir = "/root/CoT-Train-Test/DeepSeek-R1-Distill-Qwen-7B-law-CoT-v1"
+output_model_dir = "/root/CoT-Train-Test/DeepSeek-R1-Distill-Qwen-1.5B-law-CoT-v1"
 trainer.save_model(output_model_dir)
 # 也保存 tokenizer
 tokenizer.save_pretrained(output_model_dir)
