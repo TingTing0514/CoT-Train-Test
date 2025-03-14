@@ -72,7 +72,7 @@ def format_prompts_func(examples):
 
 train_dataset = load_dataset(
     path="json",
-    data_files="/root/data/dataset/law/law_CoT.json",
+    data_files="/root/CoT-Train-Test/law_CoT.json",
     split="train[0:]",  
     )
 train_dataset = train_dataset.map(format_prompts_func, batched = True)
