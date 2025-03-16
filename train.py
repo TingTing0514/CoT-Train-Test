@@ -11,7 +11,7 @@ model_name = "DeepSeek-R1-Distill-Qwen-7B"
 max_seq_length = 2048
 dtype = None
 load_in_4bit = True
-output_dir = f"/root/CoT-Train-Test/outputData/{model_name}-v1/outputs"
+output_dir = f"/root/CoT-Train-Test/outputData/{model_name}-v2/outputs"
 run = wandb.init(
     project='Fine-tune-DeepSeek-R1-Distill-Qwen-7B on law-reasoning-SFT',
     job_type="training"
@@ -154,7 +154,7 @@ trainer = SFTTrainer(
 
 trainer.train()
 
-output_model_dir = "/root/CoT-Train-Test/DeepSeek-R1-Distill-Qwen-7B-law-CoT-v1"
+output_model_dir = "/root/CoT-Train-Test/DeepSeek-R1-Distill-Qwen-7B-law-CoT-v2"
 trainer.save_model(output_model_dir)
 # 也保存 tokenizer
 tokenizer.save_pretrained(output_model_dir)
